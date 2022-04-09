@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Список работ</h1>
+    <div class="jobs">
+        {% for job in jobs %}
+            <h2>Action #{{ loop.index }}</h2>
+            <table>
+                <tr>
+                    <td>Задание</td>
+                    <td>Ответственный</td>
+                    <td>Продолжительность, ч</td>
+                    <td>Команда</td>
+                    <td>Статус</td>
+                </tr>
+                <tr>
+                    <td>{{ job[0] }}</td>
+                    <td>{{ job[1] }}</td>
+                    <td>{{ job[2] }}</td>
+                    <td>{{ job[3] }}</td>
+                    <td>{{ job[4] }}</td>
+                </tr>
+            </table>
+        {% endfor %}
+    </div>
+{% endblock %}

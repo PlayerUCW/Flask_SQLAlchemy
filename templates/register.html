@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Регистрация</h1>
+<p>Добро пожаловать на миссию! Чтобы вступить в ряды наших астронавтов,
+заполните форму <del>в десяти экземплярах</del> :</p>
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    {% for field in form %}
+        {% if loop.index not in [10, 11] %}
+            <p>
+                {{ field.label }}<br>
+                {{ field(class="form-control") }}<br>
+                {% for error in field.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </p>
+        {% endif %}
+    {% endfor %}
+    <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+    {{message}}
+</form>
+{% endblock %}

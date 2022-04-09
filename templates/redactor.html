@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Добавление работы</h1>
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.job.label }}<br>
+        {{ form.job(class="form-control") }}<br>
+        {% for error in form.job.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.tl.label }}<br>
+        {{ form.tl(class="form-control") }}<br>
+        {% for error in form.tl.errors %}
+            <p content="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.loc.label }}<br>
+        {{ form.loc(class="form-control") }}<br>
+        {% for error in form.loc.errors %}
+            <p content="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.start.label }}<br>
+        {{ form.start(class="form-control") }}<br>
+        {% for error in form.start.errors %}
+            <p content="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.duration.label }}<br>
+        {{ form.duration(class="form-control") }}<br>
+        {% for error in form.duration.errors %}
+            <p content="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+    <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+    {{message}}
+</form>
+{% endblock %}
