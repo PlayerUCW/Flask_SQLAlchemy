@@ -29,6 +29,6 @@ class JobsForm(FlaskForm):
     job = StringField('Задание', validators=[DataRequired()])
     tl = IntegerField('ID ответственного', validators=[DataRequired()])
     loc = StringField('ID членов команды (через ", ")', validators=[DataRequired()])
-    start = DateTimeField('Дата начала (по умолч. сейчас)', default=datetime.datetime.now())
+    start = DateTimeField('Дата начала', default=datetime.datetime.now())
     duration = IntegerField('Продолжительность, ч', validators=[DataRequired()])
     submit = SubmitField('Добавить')

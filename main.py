@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import render_template, make_response, request, redirect
+from flask import render_template, make_response, request, redirect, abort
 from flask_login import LoginManager, login_user, login_required,\
     current_user, logout_user
 from data import db_session
@@ -37,13 +37,15 @@ def index():
         res = []
         res.append(job.job)
         user = base.query(User).filter(User.id == job.team_leader).first()
-        res.append(user.surname + '' + user.name)
+        res.append(user.surname + ' ' + user.name)
         res.append(job.work_size)
         res.append(job.collaborators)
         if job.is_finished:
             res.append('Завершено')
         else:
             res.append('Не завершено')
+        res.append(job.team_leader)
+        res.append(job.id)
         jobs.append(res)
     return render_template('jobs.html',
                            title='MARS', jobs=jobs)
@@ -94,9 +96,9 @@ def login():
     return render_template('login.html', title='Авторизация', form=form)
 
 
-@app.route('/add_job',  methods=['GET', 'POST'])
+@app.route('/jobs',  methods=['GET', 'POST'])
 @login_required
-def add_news():
+def add_jobs():
     form = JobsForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
@@ -112,7 +114,37 @@ def add_news():
         db_sess.commit()
         return redirect('/')
     return render_template('redactor.html', title='Добавление работы',
-                           form=form)
+                           form=form, alt=[6, 7])
+
+
+@app.route('/jobs/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_jobs(id):
+    form = JobsForm()
+    if request.method == 'GET':
+        db_sess = db_session.create_session()
+        job = db_sess.query(Jobs).filter(Jobs.id == id).first()
+        form.job.data = job.job
+        form.tl.data = job.team_leader
+        form.duration.data = job.work_size
+        form.loc.data = job.collaborators
+        form.start.data = job.start_date
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        job = db_sess.query(Jobs).filter(Jobs.id == id).first()
+
+        job.job = form.job.data
+        job.team_leader = form.tl.data
+        job.work_size = form.duration.data
+        job.collaborators = form.loc.data
+        job.start_date = form.start.data
+        job.end_date = form.start.data + datetime.timedelta(hours=form.duration.data)
+        job.is_finished = False
+        db_sess.commit()
+        return redirect('/')
+
+    return render_template('redactor.html', title='Редактирование работы',
+                           form=form, alt=[6, 7])
 
 
 def main():

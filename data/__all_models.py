@@ -21,7 +21,9 @@ class User(SqlAlchemyBase, UserMixin):
     email = sqlalchemy.Column(sqlalchemy.String, unique=True, nullable=True)
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     modified_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
-    department = orm.relation("Department")
+    department_id = sqlalchemy.Column(sqlalchemy.Integer,
+                                   sqlalchemy.ForeignKey('departments.id'))
+    department = orm.relation('Department')
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)
@@ -50,4 +52,4 @@ class Department(SqlAlchemyBase):
     title = sqlalchemy.Column(sqlalchemy.String)
     chief = sqlalchemy.Column(sqlalchemy.Integer)
     email = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    members = orm.relation("User", back_populates="departments")
+    members = orm.relation("User", back_populates="department")

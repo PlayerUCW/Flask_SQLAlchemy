@@ -5,7 +5,7 @@
     <div class="jobs">
         {% for job in jobs %}
             <h2>Action #{{ loop.index }}</h2>
-            <table>
+            <table class="table table-bordered">
                 <tr>
                     <td>Задание</td>
                     <td>Ответственный</td>
@@ -21,6 +21,12 @@
                     <td>{{ job[4] }}</td>
                 </tr>
             </table>
+            {% if current_user.is_authenticated and current_user.id in [1, job[5]] %}
+            <div>
+                <a href="/jobs/{{ job[6] }}" class="btn btn-warning"> Изменить </a>
+                <a href="/jobs_delete/{{ job[6] }}" class="btn btn-danger"> Удалить </a>
+            </div>
+            {% endif %}
         {% endfor %}
     </div>
 {% endblock %}
