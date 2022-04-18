@@ -1,3 +1,5 @@
+import bdb
+
 from flask import Flask
 from flask import render_template, make_response, request, redirect, abort
 from flask_login import LoginManager, login_user, login_required,\
@@ -145,6 +147,18 @@ def edit_jobs(id):
 
     return render_template('redactor.html', title='Редактирование работы',
                            form=form, alt=[6, 7])
+
+
+@app.route("/jobs_delete/<int:id>")
+def delete_jobs(id):
+    db_sess = db_session.create_session()
+    job = db_sess.query(Jobs).filter(Jobs.id == id,
+                                     Jobs.team_leader == current_user.id
+                                     ).first()
+    if job:
+        db_sess.delete(job)
+        db_sess.commit()
+    return redirect('/')
 
 
 def main():
