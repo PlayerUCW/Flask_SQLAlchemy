@@ -32,3 +32,11 @@ class JobsForm(FlaskForm):
     start = DateTimeField('Дата начала', default=datetime.datetime.now())
     duration = IntegerField('Продолжительность, ч', validators=[DataRequired()])
     submit = SubmitField('Добавить')
+
+
+class DepsForm(FlaskForm):
+    title = StringField('Название', validators=[DataRequired()])
+    chief = IntegerField('ID руководителя', validators=[DataRequired()])
+    email = StringField('Электронная почта департамента', validators=[DataRequired()])
+    members = StringField('ID членов департамента (через ", ")', validators=[DataRequired()])
+    submit = SubmitField('Добавить')

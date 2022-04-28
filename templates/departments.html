@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Список департаментов</h1>
+    <div class="jobs">
+        {% for dep in deps %}
+            <h2>Department #{{ loop.index }}</h2>
+            <table class="table table-bordered">
+                <tr>
+                    <td>Название</td>
+                    <td>Руководитель</td>
+                    <td>Команда</td>
+                    <td>Электронная почта</td>
+                </tr>
+                <tr>
+                    <td>{{ dep[0] }}</td>
+                    <td>{{ dep[1] }}</td>
+                    <td>{{ dep[2] }}</td>
+                    <td>{{ dep[3] }}</td>
+                </tr>
+            </table>
+            {% if current_user.is_authenticated and current_user.id in [1, dep[4]] %}
+            <div>
+                <a href="/deps/{{ dep[5] }}" class="btn btn-warning"> Изменить </a>
+                <a href="/deps_delete/{{ dep[5] }}" class="btn btn-danger"> Удалить </a>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endblock %}

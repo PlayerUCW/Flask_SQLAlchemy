@@ -53,6 +53,25 @@ def index():
                            title='MARS', jobs=jobs)
 
 
+@app.route('/departments')
+def departments():
+    base = db_session.create_session()
+    raw = base.query(Department)
+    deps = []
+    for dep in raw:
+        res = []
+        res.append(dep.title)
+        user = base.query(User).filter(User.id == dep.chief).first()
+        res.append(user.surname + ' ' + user.name)
+        res.append(', '.join([m.id for m in dep.members]))
+        res.append(dep.email)
+        res.append(dep.chief)
+        res.append(dep.id)
+        deps.append(res)
+    return render_template('departments.html',
+                           title='MARS', deps=deps)
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def reqister():
     form = UserForm()
@@ -159,6 +178,57 @@ def delete_jobs(id):
         db_sess.delete(job)
         db_sess.commit()
     return redirect('/')
+
+
+@app.route('/deps',  methods=['GET', 'POST'])
+@login_required
+def add_deps():
+    form = DepsForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        dep = Department
+        dep.title = form.title.data
+        dep.chief = form.chief.data
+        dep.email = form.email.data
+        print('\n', dep.members, type(dep.members), '\n')
+        users = db_sess.query(User).filter(User.id.in_(form.members.data.split())).all()
+        for u in users:
+            dep.members.append(u)
+        dep.members.append(current_user)
+        db_sess.add(dep)
+        db_sess.commit()
+        return redirect('/departments')
+    return render_template('redactor.html', title='Добавление департамента',
+                           form=form, alt=[5, 6])
+
+
+@app.route('/deps/<int:id>',  methods=['GET', 'POST'])
+@login_required
+def edit_deps(id):
+    form = DepsForm()
+    if request.method == 'GET':
+        db_sess = db_session.create_session()
+        dep = db_sess.query(Department).filter(Department.id == id).first()
+        form.title.data = dep.title
+        form.chief.data = dep.chief
+        form.email.data = dep.email
+        form.members.data = ', '.join([m.id for m in dep.members])
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        dep = Department
+        dep.title = form.title.data
+        dep.chief = form.chief.data
+        dep.email = form.email.data
+        users = db_sess.query(User).filter(User.id.in_(form.members.data.split()))
+        dep.members.clear()
+        for u in users:
+            dep.members.append(u)
+        dep.members.append(current_user)
+        db_sess.add(dep)
+        db_sess.commit()
+        return redirect('/departments')
+    return render_template('redactor.html', title='Добавление департамента',
+                           form=form, alt=[5, 6])
 
 
 def main():
