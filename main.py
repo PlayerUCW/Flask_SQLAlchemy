@@ -63,7 +63,7 @@ def departments():
         res.append(dep.title)
         user = base.query(User).filter(User.id == dep.chief).first()
         res.append(user.surname + ' ' + user.name)
-        res.append(', '.join([m.id for m in dep.members]))
+        res.append(', '.join([str(m.id) for m in dep.members]))
         res.append(dep.email)
         res.append(dep.chief)
         res.append(dep.id)
@@ -186,14 +186,15 @@ def add_deps():
     form = DepsForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
-        dep = Department
+        dep = Department()
         dep.title = form.title.data
         dep.chief = form.chief.data
         dep.email = form.email.data
         print('\n', dep.members, type(dep.members), '\n')
         users = db_sess.query(User).filter(User.id.in_(form.members.data.split())).all()
         for u in users:
-            dep.members.append(u)
+            if u not in dep.members:
+                dep.members.append(u)
         dep.members.append(current_user)
         db_sess.add(dep)
         db_sess.commit()
