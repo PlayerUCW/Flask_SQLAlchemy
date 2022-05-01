@@ -6,6 +6,16 @@ from sqlalchemy import orm
 import datetime
 
 
+association_table = sqlalchemy.Table(
+    'association',
+    SqlAlchemyBase.metadata,
+    sqlalchemy.Column('jobs', sqlalchemy.Integer,
+                      sqlalchemy.ForeignKey('jobs.id')),
+    sqlalchemy.Column('category', sqlalchemy.Integer,
+                      sqlalchemy.ForeignKey('category.id'))
+)
+
+
 class User(SqlAlchemyBase, UserMixin):
     __tablename__ = 'users'
 
@@ -44,6 +54,10 @@ class Jobs(SqlAlchemyBase):
     end_date = sqlalchemy.Column(sqlalchemy.DateTime, nullable=True)
     is_finished = sqlalchemy.Column(sqlalchemy.Boolean)
 
+    categories = orm.relation("Category",
+                              secondary="association",
+                              backref="news")
+
 
 class Department(SqlAlchemyBase):
     __tablename__ = 'departments'
@@ -53,3 +67,9 @@ class Department(SqlAlchemyBase):
     chief = sqlalchemy.Column(sqlalchemy.Integer)
     email = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     members = orm.relation("User", back_populates="department")
+
+class Category(SqlAlchemyBase):
+    __tablename__ = 'category'
+    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True,
+                           autoincrement=True)
+    name = sqlalchemy.Column(sqlalchemy.String, nullable=True)

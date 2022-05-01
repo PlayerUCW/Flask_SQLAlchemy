@@ -11,6 +11,7 @@
                     <td>Ответственный</td>
                     <td>Продолжительность, ч</td>
                     <td>Команда</td>
+                    <td>Категории</td>
                     <td>Статус</td>
                 </tr>
                 <tr>
@@ -19,12 +20,13 @@
                     <td>{{ job[2] }}</td>
                     <td>{{ job[3] }}</td>
                     <td>{{ job[4] }}</td>
+                    <td>{{ job[5] }}</td>
                 </tr>
             </table>
-            {% if current_user.is_authenticated and current_user.id in [1, job[5]] %}
+            {% if current_user.is_authenticated and current_user.id in [1, job[6]] %}
             <div>
-                <a href="/jobs/{{ job[6] }}" class="btn btn-warning"> Изменить </a>
-                <a href="/jobs_delete/{{ job[6] }}" class="btn btn-danger"> Удалить </a>
+                <a href="/jobs/{{ job[7] }}" class="btn btn-warning"> Изменить </a>
+                <a href="/jobs_delete/{{ job[7] }}" class="btn btn-danger"> Удалить </a>
             </div>
             {% endif %}
         {% endfor %}

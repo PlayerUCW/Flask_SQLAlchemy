@@ -42,6 +42,7 @@ def index():
         res.append(user.surname + ' ' + user.name)
         res.append(job.work_size)
         res.append(job.collaborators)
+        res.append(', '.join([c.name for c in job.categories]))
         if job.is_finished:
             res.append('Завершено')
         else:
@@ -130,12 +131,13 @@ def add_jobs():
         job.collaborators = form.loc.data
         job.start_date = form.start.data
         job.end_date = form.start.data + datetime.timedelta(hours=form.duration.data)
+        job.categories.extend(db_sess.query(Category).filter(Category.id.in_(form.cat.data.split(', '))))
         job.is_finished = False
         db_sess.add(job)
         db_sess.commit()
         return redirect('/')
     return render_template('redactor.html', title='Добавление работы',
-                           form=form, alt=[6, 7])
+                           form=form, alt=[7, 8])
 
 
 @app.route('/jobs/<int:id>', methods=['GET', 'POST'])
@@ -150,6 +152,7 @@ def edit_jobs(id):
         form.duration.data = job.work_size
         form.loc.data = job.collaborators
         form.start.data = job.start_date
+        form.cat.data = ', '.join([str(c.id) for c in job.categories])
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         job = db_sess.query(Jobs).filter(Jobs.id == id).first()
@@ -160,12 +163,13 @@ def edit_jobs(id):
         job.collaborators = form.loc.data
         job.start_date = form.start.data
         job.end_date = form.start.data + datetime.timedelta(hours=form.duration.data)
+        job.categories.extend(db_sess.query(Category).filter(Category.id.in_(form.cat.data.split(', '))))
         job.is_finished = False
         db_sess.commit()
         return redirect('/')
 
     return render_template('redactor.html', title='Редактирование работы',
-                           form=form, alt=[6, 7])
+                           form=form, alt=[7, 8])
 
 
 @app.route("/jobs_delete/<int:id>")
@@ -213,7 +217,7 @@ def edit_deps(id):
         form.title.data = dep.title
         form.chief.data = dep.chief
         form.email.data = dep.email
-        form.members.data = ', '.join([m.id for m in dep.members])
+        form.members.data = ', '.join([str(m.id) for m in dep.members])
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         dep = Department

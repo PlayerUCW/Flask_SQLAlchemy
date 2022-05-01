@@ -31,6 +31,7 @@ class JobsForm(FlaskForm):
     loc = StringField('ID членов команды (через ", ")', validators=[DataRequired()])
     start = DateTimeField('Дата начала', default=datetime.datetime.now())
     duration = IntegerField('Продолжительность, ч', validators=[DataRequired()])
+    cat = StringField('Номера категорий (через ", ")', validators=[DataRequired()])
     submit = SubmitField('Добавить')
 
 
